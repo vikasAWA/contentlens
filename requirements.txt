@@ -1,0 +1,8 @@
+# requirements.txt
+python-fasthtml
+python-dotenv
+google-generativeai
+PyPDF2
+pillow
+markdown
+
