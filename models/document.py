@@ -5,6 +5,8 @@ import PyPDF2
 from PIL import Image
 import json 
 import markdown
+import docx
+
 
 class Document:
     """
@@ -27,46 +29,60 @@ class Document:
         self.content = None
         self.extracted_text = None
         
+    # Add this import at the top of the file
+
     def extract_text(self):
         """Extract text content from the document based on its type."""
-        # For plain text files
-        if self.file_type == 'text/plain':
-            with open(self.file_path, 'r', encoding='utf-8') as file:
-                self.extracted_text = file.read()
-        
-        # For PDF files
-        elif self.file_type == 'applicaton/pdf':
-            text = ""
-            with open(self.file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                
-                for page in pdf_reader.pages:
-                    text += page.extract_text()
-            self.extracted_text = text
-        
-        # For Json files
-        elif self.file_type == 'application/json':
-            with open(self.file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)
-                # Convert JSON to a formatted string
-                self.extracted_text = json.dumps(data, indent=2)
-                
-        # For Markdown files
-        elif self.file_type == 'test/markdown':
-            with open(self.file_path, 'r', encoding='utf-8') as file:
-                md_content = file.read()
-                self.extracted_text = md_content
-                
-         # For image files
-        elif self.file_type.startswith('image/'):
-            # For images, we'll rely on the LLM to describe the image
-            self.extracted_text = f"[Image: {self.file_name}]"
+        try:
+            # Check if we need to determine the file type from extension
+            if self.file_type == 'application/octet-stream':
+                # Try to determine type from file extension
+                if self.file_name.endswith('.md') or self.file_name.endswith('.markdown'):
+                    self.file_type = 'text/markdown'
+                elif self.file_name.endswith('.txt'):
+                    self.file_type = 'text/plain'
+                elif self.file_name.endswith('.json'):
+                    self.file_type = 'application/json'
+                elif self.file_name.endswith('.docx'):
+                    self.file_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             
-        # For unsupported file types
-        else:
-            self.extracted_text = f"Unsupported file type: {self.file_type}"
+            # For text-based files (plain text, markdown, etc.)
+            if self.file_type in ['text/plain', 'text/markdown']:
+                with open(self.file_path, 'r', encoding='utf-8') as file:
+                    self.extracted_text = file.read()
+                    
+            # For JSON files
+            elif self.file_type == 'application/json':
+                with open(self.file_path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                    # Convert JSON to a formatted string
+                    self.extracted_text = json.dumps(data, indent=2)
             
-        return self.extracted_text
+            # For Word (docx) files
+            elif self.file_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or self.file_name.endswith('.docx'):
+                doc = docx.Document(self.file_path)
+                full_text = []
+                for para in doc.paragraphs:
+                    full_text.append(para.text)
+                self.extracted_text = '\n'.join(full_text)
+                    
+            # For image files
+            elif self.file_type.startswith('image/'):
+                # For images, we'll rely on the LLM to describe the image
+                self.extracted_text = f"[Image: {self.file_name}]"
+                
+            # For unsupported file types
+            else:
+                self.extracted_text = f"Unsupported file type: {self.file_type}"
+                
+            return self.extracted_text
+            
+        except Exception as e:
+            # Handle any errors during extraction
+            self.extracted_text = f"Error extracting text: {str(e)}"
+            return self.extracted_text
+
+
     
     def cleanup(self):
         """Delete the document file from disk."""

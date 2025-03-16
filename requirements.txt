@@ -1,8 +1,10 @@
 # requirements.txt
 python-fasthtml
+monsterui
 python-dotenv
 google-generativeai
-PyPDF2
+pdfplumber
 pillow
 markdown
+python-docx
 

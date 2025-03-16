@@ -17,30 +17,44 @@ class Processor:
         # Initializing the gemini model
         self.model = genai.GenerativeModel('gemini-2.0-flash')
         
+    # In models/processor.py
     def process_document(self, document, instructions):
-        """
-        Process a document according to the given instructions.
-        
-        Args:
-            document (Document): The document to process
-            instructions (str): Instructions for processing
-            
-        Returns:
-            str: The processed result in markdown format
-        """
+        """Process a document according to the given instructions."""
         if not document.extracted_text:
             document.extract_text()
-            
-        # Creating a prompt for the AI model
-        prompt = f"""
-        Instructions: {instructions}
         
-        Document content:
+        # For images, use Gemini Pro Vision
+        if document.file_type.startswith('image/'):
+            try:
+                # Initialize the vision model
+                vision_model = genai.GenerativeModel('gemini-2.0-flash')
+                
+                # Create image part
+                image_parts = [{"mime_type": document.file_type, "data": open(document.file_path, "rb").read()}]
+                
+                # Create prompt
+                prompt = f"Instructions: {instructions}\n\nAnalyze this image and respond according to the instructions."
+                
+                # Generate content with image
+                response = vision_model.generate_content([prompt, *image_parts])
+                return response.text
+                
+            except Exception as e:
+                return f"Error processing image: {str(e)}"
+        
+        # For text-based documents
+        prompt = f"""
+        Instructions from user: {instructions}
+        
+        Document content (from {document.file_name}, type: {document.file_type}):
+        
         {document.extracted_text}
         
-        Please process according to the instructions and return the result in markdown format.
+        Process the above document content according to the user's instructions.
+        Format your response in markdown.
         """
         
         response = self.model.generate_content(prompt)
-        
         return response.text
+
+
