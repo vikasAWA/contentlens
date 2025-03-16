@@ -21,6 +21,25 @@ app, rt = fast_app(
     static_path="static"
 )
 
+# Add this after your app initialization
+@app.middleware("http")
+async def check_session_expiry(request, call_next):
+    """Clean up files when session expires or page is refreshed."""
+    response = await call_next(request)
+    
+    # If this is a new page load (not an asset request)
+    if request.url.path == "/" and request.method == "GET":
+        # Clean up any existing documents
+        for file_id, doc_info in list(documents.items()):
+            result_path = doc_info["result_path"]
+            if os.path.exists(result_path):
+                os.remove(result_path)
+                print(f"Deleted result file on page refresh: {result_path}")
+        
+        # Clear the documents dictionary
+        documents.clear()
+    
+    return response
 
 
 processor = Processor() # Creating the processor 
@@ -62,7 +81,16 @@ def get():
                     ),
                     cls="mb-6"
                 ),
-                
+                Div(
+                    H4("Privacy Notice:", cls="text-orange-600"),
+                    Ul(
+                        Li("Uploaded files are deleted immediately after processing"),
+                        Li("Results are deleted after download or when you process another document"),
+                        Li("All data is automatically deleted when the page is refreshed"),
+                        cls=ListT.disc
+                    ),
+                    cls="mt-4 p-3 border border-orange-200 bg-orange-50 rounded-md"
+                ),
                 # Upload form
                 Form(
                     method="post",
@@ -105,6 +133,7 @@ def get():
                         ),
                     ),
                     
+
                     # Submit button
                     DivCentered(
                         Button(
@@ -177,11 +206,16 @@ async def post(req):
         result_path = f"downloads/{file_id}_result.md"
         with open(result_path, "w", encoding="utf-8") as f:
             f.write(result)
+            
+        # Delete the original uploaded file since we don't need it anymore
+        if os.path.exists(document.file_path):
+            os.remove(document.file_path)
+            print(f"Deleted uploaded file after processing: {document.file_path}")
         
         # Store the document and result path for download  
         documents[file_id] = {
-            "document": document,
-            "result_path": result_path
+            "result_path": result_path,
+            "file_name": file_name
         }
         
         # Show the result
@@ -230,7 +264,7 @@ async def post(req):
                         ),
                         A(
                             DivLAligned(UkIcon("redo"), "Process Another Document"),
-                            href="/", 
+                            href="/process-another",  # Use our new route instead of "/"
                             cls=ButtonT.secondary
                         ),
                         cls="space-x-4"
@@ -276,6 +310,7 @@ def get():
 
         
 # Add this route to handle downloads
+
 @rt("/download/{file_id}")
 async def get(file_id: str):
     """Handle GET requests to download processed results."""
@@ -289,8 +324,8 @@ async def get(file_id: str):
     
     # Get the document info
     doc_info = documents[file_id]
-    document = doc_info["document"]
     result_path = doc_info["result_path"]
+    file_name = doc_info["file_name"]
     
     # Check if the result file exists
     if not os.path.exists(result_path):
@@ -300,30 +335,52 @@ async def get(file_id: str):
             A("Go Back", href="/", cls=ButtonT.primary)
         )
     
-    # Serve the file for download
+    # Create a temporary file with the same content
+    temp_file_path = f"downloads/temp_{file_id}.md"
+    with open(result_path, "r", encoding="utf-8") as src, open(temp_file_path, "w", encoding="utf-8") as dst:
+        dst.write(src.read())
+    
+    # Delete the original file
+    os.remove(result_path)
+    print(f"Deleted original result file: {result_path}")
+    
+    # Remove from memory
+    documents.pop(file_id, None)
+    print(f"Removed document {file_id} from memory")
+    
+    # Serve the temporary file
     response = FileResponse(
-        result_path,
-        filename=f"{document.file_name}_result.md",
+        temp_file_path,
+        filename=f"{file_name}_result.md",
         media_type="text/markdown"
     )
     
-    # Clean up files after serving (task-based approach)
-    # We use background tasks to ensure the file is sent before deletion
-    async def cleanup():
-        # Small delay to ensure file is fully sent
-        await asyncio.sleep(1)
-        # Delete the original document
-        document.cleanup()
-        # Delete the result file
-        if os.path.exists(result_path):
-            os.remove(result_path)
-        # Remove from memory
-        documents.pop(file_id, None)
+    # Set up a background task to delete the temporary file after a few seconds
+    async def cleanup_temp():
+        await asyncio.sleep(5)  # Wait longer to ensure file is sent
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+            print(f"Deleted temporary file: {temp_file_path}")
     
-    # Add the cleanup as a background task
-    response.background = BackgroundTask(cleanup)
+    response.background = BackgroundTask(cleanup_temp)
     
     return response
+
+@rt("/process-another")
+async def get():
+    """Handle clicking 'Process Another Document' button."""
+    # Clear all documents and their files
+    for file_id, doc_info in list(documents.items()):
+        result_path = doc_info["result_path"]
+        if os.path.exists(result_path):
+            os.remove(result_path)
+            print(f"Deleted result file when starting new process: {result_path}")
+    
+    # Clear the documents dictionary
+    documents.clear()
+    
+    # Redirect to home page
+    return RedirectResponse(url="/", status_code=303)
 
 
 
