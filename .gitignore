@@ -33,3 +33,4 @@ downloads/
 .vscode/
 *.swp
 *.swo
+.sesskey

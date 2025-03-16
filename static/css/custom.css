@@ -1,0 +1,32 @@
+/* static/css/custom.css */
+.result-container {
+    line-height: 1.6;
+}
+
+.result-container h1, 
+.result-container h2, 
+.result-container h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.result-container ul, 
+.result-container ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.result-container pre {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+}
+
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator {
+    display: block;
+}
