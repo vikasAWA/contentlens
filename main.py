@@ -97,7 +97,7 @@ def get():
                         Li("All data is automatically deleted when the page is refreshed"),
                         cls=ListT.disc
                     ),
-                    cls="mt-4 p-3 border border-orange-200 bg-orange-50 rounded-md"
+                    cls="mt-4 p-3 border border-orange-200 bg-orange-50 text-gray-800"
                 ),
                 # Upload form
                 Form(
@@ -265,7 +265,7 @@ async def post(req):
                         H3("Result:", cls="text-xl font-bold mb-4"),
                         Div(
                             Safe(markdown_to_html(result)), 
-                            cls="result-container bg-gray-50 p-4 rounded-md overflow-auto max-h-96"
+                            cls="result-container bg-gray-50 p-4 rounded-md overflow-auto max-h-96 text-gray-800"
                         ),
                         cls="mb-6"
                     ),
