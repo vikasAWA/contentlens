@@ -1,7 +1,6 @@
 import os 
 import uuid
 from datetime import datetime
-import PyPDF2
 from PIL import Image
 import json 
 import markdown

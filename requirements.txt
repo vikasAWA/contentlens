@@ -3,7 +3,6 @@ python-fasthtml
 monsterui
 python-dotenv
 google-generativeai
-pdfplumber
 pillow
 markdown
 python-docx
