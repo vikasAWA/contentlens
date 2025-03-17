@@ -41,6 +41,14 @@ async def check_session_expiry(request, call_next):
     
     return response
 
+def logo():
+    return DivLAligned(
+        Span("Content", cls="font-bold text-blue-600"),
+        Span("Lens", cls="font-bold text-gray-700"),
+        UkIcon("search", cls="text-blue-500 ml-1"),
+        cls="text-2xl"
+    )
+
 
 processor = Processor() # Creating the processor 
 
@@ -56,12 +64,12 @@ def markdown_to_html(md_text):
 def get():
     """Handle GET requests to the home page."""
     return Titled(
-        "Document Processor",
+        "🔍 ContentLens | AI-Powered Document Insights",
         Container(
             # Hero section with gradient background
             Section(
-                H1("AI Document Processor", cls="text-center text-3xl font-bold"),
-                P("Upload a document and let AI transform it according to your instructions.", 
+                logo(),
+                P("See your documents through the lens of AI", 
                   cls=(TextT.muted, "text-center mb-6")),
                 cls=(SectionT.primary, "rounded-lg p-8 mb-8")
             ),
@@ -150,8 +158,8 @@ def get():
             
             # Footer
             Div(
-                P("Powered by Gemini AI • Built with FastHTML and MonsterUI", 
-                  cls=(TextT.muted, "text-center")),
+                P("ContentLens • Powered by Gemini AI • Built with FastHTML and MonsterUI", 
+                cls=(TextT.muted, "text-center")),
                 cls="mt-8"
             ),
             
@@ -246,6 +254,12 @@ async def post(req):
                     ),
                     
                     Divider(),
+                      # Add this notice at the bottom of the card
+                    Div(
+                        P("Note: Your processed document will be deleted after download or when you start a new process.", 
+                        cls=TextT.muted),
+                        cls="mt-4 text-center"
+                    ),
                     
                     Div(
                         H3("Result:", cls="text-xl font-bold mb-4"),
@@ -257,15 +271,20 @@ async def post(req):
                     ),
                     
                     DivCentered(
+                        # In your results page, update the download button
                         A(
                             DivLAligned(UkIcon("download"), "Download Result"),
                             href=f"/download/{file_id}", 
-                            cls=(ButtonT.primary, "mr-4")
+                            cls=(ButtonT.primary, "mr-4"),
+                            uk_tooltip="Download now - this file will be deleted afterward"
                         ),
+                        # Update your "Process Another" button
                         A(
                             DivLAligned(UkIcon("redo"), "Process Another Document"),
-                            href="/process-another",  # Use our new route instead of "/"
-                            cls=ButtonT.secondary
+                            href="/process-another",
+                            cls=ButtonT.secondary,
+                            uk_tooltip="Current results will be deleted",
+                            onclick="return confirm('Start a new process? Your current results will be deleted.');"
                         ),
                         cls="space-x-4"
                     ),
