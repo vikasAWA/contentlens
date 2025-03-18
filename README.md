@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 # ContentLens
 
 [![ContentLens](https://img.shields.io/badge/Try%20It-Live%20Demo-blue)](https://contentlens-production.up.railway.app)
