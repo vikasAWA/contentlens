@@ -80,11 +80,12 @@ def get():
                 Div(
                     H4("📝 Example Instructions", cls="font-bold"),
                     Ul(
-                        Li("Summarize this document in 3 paragraphs"),
+                        Li("Summarize this document in 3 lines."),
                         Li("Extract the key points as bullet points"),
                         Li("Convert this content to a formal email"),
                         Li("Analyze the sentiment of this text"),
                         Li("Translate this content to Spanish"),
+                        Li("What's going on in this image?"),
                         cls=ListT.disc
                     ),
                     cls="mb-6"
