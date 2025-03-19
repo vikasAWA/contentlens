@@ -120,7 +120,14 @@ def get():
                                     name="document", 
                                     required=True,
                                     accept=".txt,.md,.markdown,.json,.docx,image/*",
-                                    cls="hidden"
+                                    id="document-input",
+                                    onchange="document.getElementById('upload-status').textContent = 'File selected: ' + this.files[0].name; document.getElementById('upload-status').style.display = 'block';",
+                                    
+                                ),
+                                # Add a status element right after the input
+                                Div(
+                                    id="upload-status",
+                                    cls="mt-2 p-2 border border-blue-300 bg-blue-50 text-gray-800 rounded hidden"
                                 ),
                                 cls="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
                             ),
