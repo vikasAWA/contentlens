@@ -59,6 +59,7 @@ def markdown_to_html(md_text):
     """Convert markdown text to HTML for display."""
     return markdown.markdown(md_text)
 
+
 # Defining main page 
 @rt("/")
 def get():
@@ -129,7 +130,7 @@ def get():
                                     id="upload-status",
                                     cls="mt-2 p-2 border border-blue-300 bg-blue-50 text-gray-800 rounded hidden"
                                 ),
-                                cls="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
+                                cls="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer"
                             ),
                             P("Supported formats: TXT, MD, JSON, DOCX, and images", cls=TextT.muted),
                             cls="mb-6"
