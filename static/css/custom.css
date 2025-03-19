@@ -30,3 +30,18 @@
 .htmx-request .htmx-indicator {
     display: block;
 }
+
+/* Add to your static/css/custom.css file */
+#upload-status {
+    /* Light theme */
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #333333;
+}
+
+[data-theme="dark"] #upload-status {
+    /* Dark theme */
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #e0e0e0;
+}
