@@ -50,7 +50,7 @@ Your privacy matters:
 2. Install dependencies: `pip install -r requirements.txt`
 3. Create a `.env` file with your Google Gemini API key (see `.env.example`)
 4. Run the application: `python main.py`
-5. Visit `http://localhost:5001` in your browser
+5. Visit the URL shown in your terminal (typically `http://localhost:5001`)
 
 ## 📝 License
 
