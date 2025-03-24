@@ -49,8 +49,8 @@ Your privacy matters:
 1. Clone this repository
 2. Install dependencies: `pip install -r requirements.txt`
 3. Create a `.env` file with your Google Gemini API key (see `.env.example`)
-4. Run the application: `python app.py`
-5. Visit `http://localhost:5000` in your browser
+4. Run the application: `python main.py`
+5. Visit `http://localhost:5001` in your browser
 
 ## 📝 License
 
