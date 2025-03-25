@@ -53,7 +53,7 @@ async def check_session_expiry(request, call_next):
 
 def logo():
     return DivLAligned(
-        Span("Content", cls="font-bold text-blue-600"),
+        Span("Content", cls="text-center text-3xl font-bold text-white"),
         Span("Lens", cls="font-bold text-gray-700"),
         UkIcon("search", cls="text-blue-500 ml-1"),
         cls="text-2xl"
@@ -78,11 +78,13 @@ def get():
         "🔍 ContentLens | AI-Powered Document Insights",
         Container(
             # Hero section with gradient background
+            # Add a gradient hero section at the top of your main page
             Section(
                 logo(),
                 P("See your documents through the lens of AI", 
-                  cls=(TextT.muted, "text-center mb-6")),
-                cls=(SectionT.primary, "rounded-lg p-8 mb-8")
+                cls=(TextT.muted, "text-center mb-6 text-white opacity-90")),
+                cls="rounded-lg p-8 mb-8 bg-gradient-to-r from-blue-400 to-indigo-700",
+                
             ),
             
             # Main content in a card
@@ -123,7 +125,7 @@ def get():
                             H4("Select Document", cls="font-semibold mb-2"),
                             Label(
                                 DivLAligned(
-                                    UkIcon("file-up", height=6, width=6),
+                                    UkIcon("file-up", height=6, width=6, cls="theme-accent-color"),
                                     Span("Choose a file", cls="ml-2")
                                 ),
                                 Input(
