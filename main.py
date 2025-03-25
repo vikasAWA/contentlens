@@ -75,7 +75,7 @@ def markdown_to_html(md_text):
 def get():
     """Handle GET requests to the home page."""
     return Titled(
-        "🔍 ContentLens | AI-Powered Document Insights",
+        Div("🔍 ContentLens | AI-Powered Document Insights", cls='p-5'),
         Container(
             # Hero section with gradient background
             # Add a gradient hero section at the top of your main page
