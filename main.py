@@ -83,7 +83,7 @@ def get():
                 logo(),
                 P("See your documents through the lens of AI", 
                 cls=(TextT.muted, "text-center mb-6 text-white opacity-90")),
-                cls="rounded-lg p-8 mb-8 bg-gradient-to-r from-blue-400 to-indigo-700",
+                cls="rounded-lg mt-5 p-8 mb-8 bg-gradient-to-r from-blue-400 to-indigo-700",
                 
             ),
             
